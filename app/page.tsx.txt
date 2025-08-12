@@ -1,0 +1,683 @@
+"use client";
+
+import { useRef, useState } from "react";
+
+// tiny inline lock icon (no external CSS)
+function LockIcon({ className = "w-5 h-5 mb-2" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm3 8H9V7a3 3 0 116 0v3z" />
+    </svg>
+  );
+}
+
+type PageKey =
+  | "main"
+  | "designProcess"
+  | "simpleMachines"
+  | "circuits"
+  | "airplaneDay1"
+  | "airplaneDay2"
+  | "airplaneDay3"
+  | "airplaneDay4";
+
+export default function Page() {
+  const [page, setPage] = useState<PageKey>("main");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [quiz, setQuiz] = useState<Record<number, { answer: string; correct: boolean } | null>>({
+    1: null,
+    2: null,
+    3: null,
+    4: null,
+  });
+
+  const checkAnswer = (num: number, isCorrect: boolean, label: string) =>
+    setQuiz((q) => ({ ...q, [num]: { answer: label, correct: isCorrect } }));
+
+  const homeRef = useRef<HTMLElement | null>(null);
+  const projectsRef = useRef<HTMLElement | null>(null);
+  const competitionsRef = useRef<HTMLElement | null>(null);
+  const portfolioRef = useRef<HTMLElement | null>(null);
+
+  const navLink =
+    "text-gray-600 hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium";
+
+  const scrollToId = (id: string) => {
+    const el = document.querySelector(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleTopNav = (href: string) => {
+    if (page !== "main") {
+      setPage("main");
+      setTimeout(() => scrollToId(href), 0);
+    } else {
+      scrollToId(href);
+    }
+    setMobileOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen">
+      {/* NAV */}
+      <nav className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold text-indigo-600">
+                Engage<span className="text-gray-800">Hub</span>
+              </span>
+            </div>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-4">
+                <button onClick={() => handleTopNav("#home")} className={navLink}>Home</button>
+                <button onClick={() => handleTopNav("#projects")} className={navLink}>Projects</button>
+                <button onClick={() => handleTopNav("#competitions")} className={navLink}>Competitions</button>
+                <button onClick={() => handleTopNav("#portfolio")} className={navLink}>Portfolio</button>
+              </div>
+            </div>
+            <div className="-mr-2 flex md:hidden">
+              <button
+                type="button"
+                onClick={() => setMobileOpen((s) => !s)}
+                aria-controls="mobile-menu"
+                aria-expanded={mobileOpen}
+                className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <span className="sr-only">Open main menu</span>
+                {!mobileOpen ? (
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                ) : (
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+        {mobileOpen && (
+          <div className="md:hidden" id="mobile-menu">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {[
+                ["Home", "#home"],
+                ["Projects", "#projects"],
+                ["Competitions", "#competitions"],
+                ["Portfolio", "#portfolio"],
+              ].map(([label, href]) => (
+                <button
+                  key={label}
+                  onClick={() => handleTopNav(href)}
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-200 hover:text-black"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* MAIN vs SUBPAGES */}
+      {page === "main" ? (
+        <div id="main-content-container">
+          <main>
+            {/* HOME */}
+            <section id="home" ref={homeRef} className="bg-indigo-600 text-white py-20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                  <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Learn the Fundamentals</h1>
+                  <p className="mt-6 max-w-3xl mx-auto text-xl text-indigo-200">
+                    Engineering is about solving problems. Strengthen your knowledge with these key concepts to become a master builder.
+                  </p>
+                </div>
+                <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  <button onClick={() => setPage("designProcess")} className="block transform hover:scale-105 transition-transform duration-300 text-left">
+                    <div className="bg-indigo-700 p-6 rounded-lg shadow-lg h-full">
+                      <h3 className="text-xl font-semibold text-white">The Engineering Design Process</h3>
+                      <p className="mt-2 text-indigo-200">Learn the systematic approach engineers use to solve problems.</p>
+                    </div>
+                  </button>
+                  <button onClick={() => setPage("simpleMachines")} className="block transform hover:scale-105 transition-transform duration-300 text-left">
+                    <div className="bg-indigo-700 p-6 rounded-lg shadow-lg h-full">
+                      <h3 className="text-xl font-semibold text-white">Simple Machines</h3>
+                      <p className="mt-2 text-indigo-200">The six classics that power everything else.</p>
+                    </div>
+                  </button>
+                  <button onClick={() => setPage("circuits")} className="block transform hover:scale-105 transition-transform duration-300 text-left">
+                    <div className="bg-indigo-700 p-6 rounded-lg shadow-lg h-full">
+                      <h3 className="text-xl font-semibold text-white">Introduction to Circuits</h3>
+                      <p className="mt-2 text-indigo-200">Voltage pushes, current flows, resistance resists.</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* PROJECTS */}
+            <section id="projects" ref={projectsRef} className="py-20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                  <h2 className="text-3xl font-extrabold text-gray-900">Project Roadmap</h2>
+                  <p className="mt-4 text-lg text-gray-600">Complete projects in order to unlock the next challenge!</p>
+                </div>
+
+                {/* Semester 1 */}
+                <div className="mt-12">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Semester 1</h3>
+
+                  {/* Term 1 */}
+                  <div className="mb-10">
+                    <h4 className="text-xl font-semibold text-indigo-700 mb-4">Term 1: Foundations of Design</h4>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+                        <div>
+                          <h5 className="text-lg font-bold text-gray-900">1. Paper Airplane Design</h5>
+                          <p className="mt-2 text-gray-600">Design, build, and test the ultimate paper airplane.</p>
+                        </div>
+                        <button
+                          onClick={() => setPage("airplaneDay1")}
+                          className="mt-4 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 text-center"
+                        >
+                          Start Project
+                        </button>
+                      </div>
+
+                      <Locked title="2. Paper Compression Test" desc="Test how much weight a paper column can hold." />
+                      <Locked title="3. Origami Chair Challenge" desc="Create a weight-bearing chair from a single sheet." />
+                    </div>
+                  </div>
+
+                  {/* Term 2 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-indigo-700 mb-4">Term 2: Structures & Mechanisms</h4>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <Locked title="4. Cardboard Structures" desc="Large-scale builds with serious strength." />
+                      <Locked title="5. Popsicle Stick Catapults" desc="Potential vs kinetic energy wars." />
+                      <Locked title="6. Bridge Building" desc="Engineer the most efficient bridge." />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Semester 2 */}
+                <div className="mt-16">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Semester 2</h3>
+
+                  <div className="mb-10">
+                    <h4 className="text-xl font-semibold text-indigo-700 mb-4">Term 3: Introduction to Electronics</h4>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <Locked title="7. Simple Circuits" desc="Circuit stickers and fundamentals." />
+                      <Locked title="8. Useless Machine" desc="Switches, motors, and pure mischief." />
+                      <Locked title="9. Wearable Programmable LED" desc="Code + textiles = fashionably bright." />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xl font-semibold text-indigo-700 mb-4">Term 4: Advanced Systems & CAD</h4>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <Locked title="10. 3D Printed Airplanes" desc="CAD a functional glider." />
+                      <Locked title="11. 3D Printed Rubber Band Car" desc="Potential energy, unleashed." />
+                      <Locked title="12. Servo Security Lock" desc="Secret codes, servo control." />
+                      <Locked title="13. Micro:bit Robotic Arm" desc="EMG-controlled robotic shenanigans." />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* PLACEHOLDERS */}
+            <section id="competitions" ref={competitionsRef} className="py-20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">...</div>
+            </section>
+
+            <section id="portfolio" ref={portfolioRef} className="bg-indigo-50 py-20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">...</div>
+            </section>
+          </main>
+        </div>
+      ) : (
+        /* SUBPAGES */
+        <div className="py-12 sm:py-20 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => setPage("main")}
+              className="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold mb-8"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Project Hub
+            </button>
+
+            {page === "designProcess" && (
+              <InfoPage title="The Engineering Design Process">
+                Identify → Imagine → Plan → Create → Test/Evaluate → Improve → Communicate.
+              </InfoPage>
+            )}
+            {page === "simpleMachines" && (
+              <InfoPage title="Simple Machines">Lever, wheel & axle, pulley, inclined plane, wedge, screw.</InfoPage>
+            )}
+            {page === "circuits" && (
+              <InfoPage title="Introduction to Circuits">Keep the magic smoke inside the components.</InfoPage>
+            )}
+
+            {page === "airplaneDay1" && <AirplaneDay1 onNext={() => setPage("airplaneDay2")} quiz={quiz[1]} onAnswer={checkAnswer} />}
+            {page === "airplaneDay2" && <AirplaneDay2 onNext={() => setPage("airplaneDay3")} quiz={quiz[2]} onAnswer={checkAnswer} />}
+            {page === "airplaneDay3" && <AirplaneDay3 onNext={() => setPage("airplaneDay4")} quiz={quiz[3]} onAnswer={checkAnswer} />}
+            {page === "airplaneDay4" && <AirplaneDay4 quiz={quiz[4]} onAnswer={checkAnswer} />}
+          </div>
+        </div>
+      )}
+
+      <footer className="bg-white text-center text-gray-500 py-8">...</footer>
+    </div>
+  );
+}
+
+/* ===== helpers & subpages (same file) ===== */
+
+function Locked({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div className="bg-gray-200 rounded-lg shadow-inner p-6 flex items-center justify-center">
+      <div className="text-center text-gray-500">
+        <LockIcon />
+        <h5 className="text-lg font-bold">{title}</h5>
+        <p className="mt-2 text-sm">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function InfoPage({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="text-gray-700">
+      <h2 className="text-3xl font-extrabold text-gray-900">{title}</h2>
+      <div className="mt-4">{children}</div>
+    </div>
+  );
+}
+
+function Header({ title, subtitle, color }: { title: string; subtitle: string; color: "indigo" | "green" }) {
+  const badge = color === "indigo" ? "bg-indigo-100" : "bg-green-100";
+  return (
+    <div className="text-center">
+      <h2 className="text-3xl font-extrabold text-gray-900">{title}</h2>
+      <h3 className={`text-2xl font-bold text-gray-800 p-4 rounded-lg mt-4 ${badge}`}>{subtitle}</h3>
+    </div>
+  );
+}
+
+function Card({ title, color, children }: { title: string; color: "indigo" | "green"; children: React.ReactNode }) {
+  const accent = color === "indigo" ? "text-indigo-600" : "text-green-600";
+  return (
+    <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+      <h4 className={`text-xl font-bold ${accent}`}>{title}</h4>
+      <div className="mt-2 text-gray-700">{children}</div>
+    </div>
+  );
+}
+
+function Quiz({
+  num,
+  prompt,
+  answers,
+  value,
+  onAnswer,
+}: {
+  num: number;
+  prompt: string;
+  answers: [string, boolean][];
+  value: { answer: string; correct: boolean } | null;
+  onAnswer: (quizNum: number, isCorrect: boolean, label: string) => void;
+}) {
+  return (
+    <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+      <h4 className="text-xl font-bold text-gray-700">Knowledge Check!</h4>
+      <p className="mt-2 text-gray-700">{prompt}</p>
+      <div className="mt-2 space-y-2">
+        {answers.map(([label, correct]) => {
+          const chosen = value?.answer === label;
+          const selectedCls = chosen && value ? (value.correct ? "bg-green-200" : "bg-red-200") : "hover:bg-gray-100";
+          return (
+            <button
+              key={label}
+              disabled={!!value}
+              onClick={() => onAnswer(num, correct, label)}
+              className={`block w-full text-left p-2 border rounded ${selectedCls}`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+      <p className={`mt-2 text-sm font-semibold ${value ? (value.correct ? "text-green-600" : "text-red-600") : ""}`}>
+        {value ? (value.correct ? "Correct! Great job." : "Not quite. Review the concept and try again.") : ""}
+      </p>
+    </div>
+  );
+}
+
+/* ---- Airplane subpages ---- */
+
+function AirplaneDay1({
+  onNext,
+  quiz,
+  onAnswer,
+}: {
+  onNext: () => void;
+  quiz: { answer: string; correct: boolean } | null;
+  onAnswer: (quizNum: number, isCorrect: boolean, label: string) => void;
+}) {
+  return (
+    <>
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900">Paper Airplane Challenge</h2>
+        <h3 className="text-2xl font-bold text-gray-800 p-4 bg-indigo-100 rounded-lg mt-4">Day 1: Research & Brainstorm</h3>
+      </div>
+
+      <Card title="Today's Objectives (TEKS §130.364)" color="indigo">
+        <ul className="mt-2 list-disc list-inside text-gray-700">
+          <li>Define criteria and constraints. (c)(1)(A)</li>
+          <li>Research aerodynamics. (c)(1)(D)</li>
+          <li>Brainstorm and sketch solutions. (c)(1)(E)</li>
+        </ul>
+      </Card>
+
+      <Card title='Concept 1: The Design Process — "Ask & Brainstorm"' color="indigo">
+        Diverge before you converge. Questions → constraints → wild ideas.
+      </Card>
+
+      <Card title="Concept 2: Aerodynamics — The Four Forces of Flight" color="indigo">
+        <p className="mt-2 text-gray-700">
+          <strong>Lift</strong> (up), <strong>Weight</strong> (down), <strong>Thrust</strong> (forward), <strong>Drag</strong> (back).
+        </p>
+      </Card>
+
+      <Quiz
+        num={1}
+        prompt="Which force is the main enemy of a paper airplane's distance?"
+        answers={[
+          ["A) Lift", false],
+          ["B) Drag", true],
+          ["C) Thrust", false],
+        ]}
+        value={quiz}
+        onAnswer={onAnswer}
+      />
+
+      <Card title="Day 1 Assignment & Design Log" color="indigo">
+        <div className="mt-6 space-y-6">
+          {[
+            ["1. Define Lift & Drag", "Explain the difference in your own words."],
+            ["2. Define Your Goal", "What are you trying to achieve?"],
+            ["3. Identify Constraints", "Two rules you must follow."],
+            ["4. Make a Prediction", "Which sketch will fly farthest and why?"],
+          ].map(([label, help], i) => (
+            <div key={i}>
+              <label className="block font-semibold text-gray-800">{label}</label>
+              <p className="text-sm text-gray-500 mb-2">{help}</p>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md" rows={i === 2 ? 2 : 3} />
+            </div>
+          ))}
+
+          <div>
+            <label className="block font-semibold text-gray-800">5. Log Your Sketches</label>
+            <p className="text-sm text-gray-500 mb-2">Upload one clear photo of your three sketches.</p>
+            <input
+              type="file"
+              multiple
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+            />
+          </div>
+        </div>
+
+        <div className="mt-8 text-right">
+          <button onClick={onNext} className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-indigo-700">
+            Save & Continue to Day 2
+          </button>
+        </div>
+      </Card>
+    </>
+  );
+}
+
+function AirplaneDay2({
+  onNext,
+  quiz,
+  onAnswer,
+}: {
+  onNext: () => void;
+  quiz: { answer: string; correct: boolean } | null;
+  onAnswer: (quizNum: number, isCorrect: boolean, label: string) => void;
+}) {
+  return (
+    <>
+      <Header title="Paper Airplane Challenge" subtitle="Day 2: Build & Observe" color="indigo" />
+
+      <Card title="Today's Objectives (TEKS §130.364)" color="indigo">
+        <ul className="mt-2 list-disc list-inside text-gray-700">
+          <li>Create prototypes based on sketches. (c)(1)(F)</li>
+          <li>Collect qualitative observations. (c)(1)(G)</li>
+        </ul>
+      </Card>
+
+      <Card title='Concept 1: The Design Process — "Create"' color="indigo">
+        Prototypes are for learning, not perfection. Build three to learn fast.
+      </Card>
+
+      <Card title="Concept 2: Aerodynamics — Stability" color="indigo">
+        CG forward = nosedive; CG back = stall. Balance is king.
+      </Card>
+
+      <Card title="Concept 3: Tutorial — Classic Dart" color="indigo">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          {[
+            ["https://i.imgur.com/L5d5j8d.png", "1. Fold in half lengthwise."],
+            ["https://i.imgur.com/sFmY3bB.png", "2. Fold top corners to the center."],
+            ["https://i.imgur.com/1Z4Zz3e.png", "3. Fold new top edges to center."],
+            ["https://i.imgur.com/s6b7O2s.png", "4. Fold wings down."],
+          ].map(([src, cap], i) => (
+            <div key={i} className="p-2 border rounded-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt={cap} className="w-full rounded" />
+              <p className="mt-2 text-sm">{cap}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Quiz
+        num={2}
+        prompt="If your plane keeps stalling/backflipping, where should you add a little weight?"
+        answers={[
+          ["A) The nose", true],
+          ["B) The tail", false],
+          ["C) The wingtips", false],
+        ]}
+        value={quiz}
+        onAnswer={onAnswer}
+      />
+
+      <Card title="Day 2 Assignment & Design Log" color="indigo">
+        <div className="mt-6 space-y-6">
+          {[
+            ["1. Folding Process", "Which prototype was easiest vs. hardest to fold? Why?"],
+            ["2. Flight Observation #1", "Describe Prototype #1."],
+            ["3. Flight Observation #2", "Describe Prototype #2."],
+            ["4. Flight Observation #3", "Describe Prototype #3; which seems most promising?"],
+          ].map(([label, help], i) => (
+            <div key={i}>
+              <label className="block font-semibold text-gray-800">{label}</label>
+              <p className="text-sm text-gray-500 mb-2">{help}</p>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md" rows={i === 0 ? 3 : 2} />
+            </div>
+          ))}
+          <div>
+            <label className="block font-semibold text-gray-800">5. Log Your Prototypes</label>
+            <p className="text-sm text-gray-500 mb-2">Upload a single, clear photo.</p>
+            <input
+              type="file"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+            />
+          </div>
+        </div>
+        <div className="mt-8 text-right">
+          <button onClick={onNext} className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-indigo-700">
+            Save & Continue to Day 3
+          </button>
+        </div>
+      </Card>
+    </>
+  );
+}
+
+function AirplaneDay3({
+  onNext,
+  quiz,
+  onAnswer,
+}: {
+  onNext: () => void;
+  quiz: { answer: string; correct: boolean } | null;
+  onAnswer: (quizNum: number, isCorrect: boolean, label: string) => void;
+}) {
+  return (
+    <>
+      <Header title="Paper Airplane Challenge" subtitle="Day 3: Analyze & Iterate" color="green" />
+
+      <Card title="Today's Objectives (TEKS §130.364)" color="green">
+        <ul className="mt-2 list-disc list-inside text-gray-700">
+          <li>Analyze results for improvements. (c)(1)(H)</li>
+          <li>Modify/redesign based on data. (c)(1)(I)</li>
+          <li>Collect quantitative data. (c)(2)(C)</li>
+        </ul>
+      </Card>
+
+      <Card title='Concept 1: The Design Process — "Test, Evaluate, & Improve"' color="green">
+        Change one variable at a time; measure or it didn’t happen.
+      </Card>
+
+      <Card title="Concept 2: Aerodynamics — Wing Shape" color="green">
+        Long/narrow = glider distance; short/wide = speed/stability. Dihedral ↑ stability.
+      </Card>
+
+      <Quiz
+        num={3}
+        prompt="To make your plane more stable and less wobbly, what should you do to the wings?"
+        answers={[
+          ["A) Fold them down (anhedral)", false],
+          ["B) Make them shorter", false],
+          ["C) Fold them slightly up (dihedral)", true],
+        ]}
+        value={quiz}
+        onAnswer={onAnswer}
+      />
+
+      <Card title="Day 3 Assignment & Design Log" color="green">
+        <div className="mt-6 space-y-6">
+          {[
+            ["1. Select Your Best Design", "Which prototype are you improving and why?"],
+            ["2. Plan Your Iteration", "What ONE variable will you change and why?"],
+            ["3. Collect Quantitative Data", "Three throws for V1 and V2; compute averages."],
+            ["4. Analyze Your Data", "Did the change help? Use averages."],
+          ].map(([label, help], i) => (
+            <div key={i}>
+              <label className="block font-semibold text-gray-800">{label}</label>
+              <p className="text-sm text-gray-500 mb-2">{help}</p>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md" rows={i === 2 ? 5 : 3} />
+            </div>
+          ))}
+
+          <div>
+            <label className="block font-semibold text-gray-800">5. Log Your Iteration</label>
+            <p className="text-sm text-gray-500 mb-2">Upload a photo showing V1 and V2.</p>
+            <input
+              type="file"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+            />
+          </div>
+        </div>
+
+        <div className="mt-8 text-right">
+          <button onClick={onNext} className="bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-green-700">
+            Save & Continue to Day 4
+          </button>
+        </div>
+      </Card>
+    </>
+  );
+}
+
+function AirplaneDay4({
+  quiz,
+  onAnswer,
+}: {
+  quiz: { answer: string; correct: boolean } | null;
+  onAnswer: (quizNum: number, isCorrect: boolean, label: string) => void;
+}) {
+  return (
+    <>
+      <Header title="Paper Airplane Challenge" subtitle="Day 4: Finalize & Reflect" color="green" />
+
+      <Card title="Today's Objectives (TEKS §130.364)" color="green">
+        <ul className="mt-2 list-disc list-inside text-gray-700">
+          <li>Create an optimized final product. (c)(1)(I)</li>
+          <li>Communicate results; reflect. (c)(1)(J)</li>
+        </ul>
+      </Card>
+
+      <Card title='Concept 1: The Design Process — "Finalize & Communicate"' color="green">
+        Summarize choices, data, and lessons learned. Show your work like a pro.
+      </Card>
+
+      <Card title="Concept 2: Combining Design Elements" color="green">
+        Hybridize the best features from earlier versions into one champion.
+      </Card>
+
+      <Quiz
+        num={4}
+        prompt="What is the final step of the engineering design process?"
+        answers={[
+          ["A) Testing", false],
+          ["B) Communicating Results", true],
+          ["C) Building a Prototype", false],
+        ]}
+        value={quiz}
+        onAnswer={onAnswer}
+      />
+
+      <Card title="Day 4 Assignment & Design Log" color="green">
+        <div className="mt-6 space-y-6">
+          {[
+            ["1. Plan Your Champion", "Which elements are you combining and why?"],
+            ["2. Final Test Results", "Three throws for Version 3; compute average."],
+            ["3. Final Analysis", "Was Version 3 your best? Compare averages."],
+            ["4. Final Reflection", "Most important thing you learned; what next?"],
+          ].map(([label, help], i) => (
+            <div key={i}>
+              <label className="block font-semibold text-gray-800">{label}</label>
+              <p className="text-sm text-gray-500 mb-2">{help}</p>
+              <textarea className="w-full p-2 border border-gray-300 rounded-md" rows={i === 1 ? 3 : 2} />
+            </div>
+          ))}
+
+          <div>
+            <label className="block font-semibold text-gray-800">5. Log Your Champion</label>
+            <p className="text-sm text-gray-500 mb-2">Upload a photo of Version 3.</p>
+            <input
+              type="file"
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+            />
+          </div>
+        </div>
+
+        <div className="mt-8 text-right">
+          <button className="bg-indigo-600 text-white font-extrabold py-3 px-8 rounded-lg shadow-lg hover:bg-indigo-700 text-lg">
+            Compile & Submit My Report
+          </button>
+        </div>
+      </Card>
+    </>
+  );
+}
